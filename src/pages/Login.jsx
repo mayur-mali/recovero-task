@@ -19,7 +19,8 @@ export default function Login() {
       toast.success("Login Successfully");
       window.location.href = "/";
     } catch (error) {
-      toast.error(`${error.response.data}`);
+      console.log(error);
+      toast.error("invalid credintial ");
     }
   };
 
