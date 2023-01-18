@@ -1,15 +1,17 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { axiosInstance } from "../config";
 import img from "../assets/6207670.jpg";
 import { toast } from "react-toastify";
 export default function RegisterAsAdmin() {
+  const [isLoading, setIsLoading] = useState(false);
   const username = useRef();
   const email = useRef();
   const password = useRef();
   const confirmPassword = useRef();
   const navigate = useNavigate();
   const handleSubmit = async (e) => {
+    setIsLoading(true);
     e.preventDefault();
     if (password.current.value === confirmPassword.current.value) {
       const user = {
@@ -20,11 +22,14 @@ export default function RegisterAsAdmin() {
       try {
         await axiosInstance.post("/create-admin", user);
         toast.success("user is created..!");
+        setIsLoading(false);
         navigate("/login");
       } catch (error) {
+        setIsLoading(false);
         console.log("error in signup", error);
       }
     } else {
+      setIsLoading(false);
       toast.error("password not match..!");
     }
   };
@@ -152,7 +157,24 @@ export default function RegisterAsAdmin() {
                       type="submit"
                       className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                     >
-                      Sign Up
+                      {isLoading ? (
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          strokeWidth={1.5}
+                          stroke="currentColor"
+                          className="w-6 h-6 animate-spin"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"
+                          />
+                        </svg>
+                      ) : (
+                        "Sign Up"
+                      )}
                     </button>
                   </div>
                 </form>

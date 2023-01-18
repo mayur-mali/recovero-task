@@ -1,13 +1,15 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import img from "../assets/6207670.jpg";
 import { axiosInstance } from "../config";
 export default function Login() {
+  const [isLoading, setIsLoading] = useState(false);
   const email = useRef();
   const password = useRef();
   const navigate = useNavigate();
   const handleSubmit = async (e) => {
+    setIsLoading(true);
     e.preventDefault();
     const user = {
       email: email.current.value,
@@ -16,10 +18,12 @@ export default function Login() {
     try {
       const getUser = await axiosInstance.post("/login", user);
       localStorage.setItem("user", JSON.stringify(getUser.data.data));
+      setIsLoading(false);
       toast.success("Login Successfully");
       window.location.href = "/";
     } catch (error) {
       console.log(error);
+      setIsLoading(false);
       toast.error("invalid credintial ");
     }
   };
@@ -96,7 +100,24 @@ export default function Login() {
                       type="submit"
                       className="w-full flex disabled:bg-gray-400 justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                     >
-                      SING IN
+                      {isLoading ? (
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          strokeWidth={1.5}
+                          stroke="currentColor"
+                          className="w-6 h-6 animate-spin"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"
+                          />
+                        </svg>
+                      ) : (
+                        "SING IN "
+                      )}
                     </button>
                   </div>
                 </form>
